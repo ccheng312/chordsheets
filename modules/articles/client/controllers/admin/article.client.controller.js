@@ -1,50 +1,50 @@
-﻿(function () {
+(function () {
   'use strict';
 
   angular
-    .module('articles.admin')
-    .controller('ArticlesAdminController', ArticlesAdminController);
+    .module('songs.admin')
+    .controller('SongsAdminController', SongsAdminController);
 
-  ArticlesAdminController.$inject = ['$scope', '$state', '$window', 'articleResolve', 'Authentication', 'Notification'];
+  SongsAdminController.$inject = ['$scope', '$state', '$window', 'songResolve', 'Authentication', 'Notification'];
 
-  function ArticlesAdminController($scope, $state, $window, article, Authentication, Notification) {
+  function SongsAdminController($scope, $state, $window, song, Authentication, Notification) {
     var vm = this;
 
-    vm.article = article;
+    vm.song = song;
     vm.authentication = Authentication;
     vm.form = {};
     vm.remove = remove;
     vm.save = save;
 
-    // Remove existing Article
+    // Remove existing Song
     function remove() {
       if ($window.confirm('Are you sure you want to delete?')) {
-        vm.article.$remove(function() {
-          $state.go('admin.articles.list');
-          Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Article deleted successfully!' });
+        vm.song.$remove(function() {
+          $state.go('admin.songs.list');
+          Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Song deleted successfully!' });
         });
       }
     }
 
-    // Save Article
+    // Save Song
     function save(isValid) {
       if (!isValid) {
-        $scope.$broadcast('show-errors-check-validity', 'vm.form.articleForm');
+        $scope.$broadcast('show-errors-check-validity', 'vm.form.songForm');
         return false;
       }
 
-      // Create a new article, or update the current instance
-      vm.article.createOrUpdate()
+      // Create a new song, or update the current instance
+      vm.song.createOrUpdate()
         .then(successCallback)
         .catch(errorCallback);
 
       function successCallback(res) {
-        $state.go('admin.articles.list'); // should we send the User to the list or the updated Article's view?
-        Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Article saved successfully!' });
+        $state.go('admin.songs.list'); // should we send the User to the list or the updated Song's view?
+        Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Song saved successfully!' });
       }
 
       function errorCallback(res) {
-        Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Article save error!' });
+        Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Song save error!' });
       }
     }
   }

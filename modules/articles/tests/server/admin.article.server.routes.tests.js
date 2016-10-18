@@ -1,11 +1,11 @@
-﻿'use strict';
+'use strict';
 
 var should = require('should'),
   request = require('supertest'),
   path = require('path'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
-  Article = mongoose.model('Article'),
+  Song = mongoose.model('Song'),
   express = require(path.resolve('./config/lib/express'));
 
 /**
@@ -15,12 +15,12 @@ var app,
   agent,
   credentials,
   user,
-  article;
+  song;
 
 /**
- * Article routes tests
+ * Song routes tests
  */
-describe('Article Admin CRUD tests', function () {
+describe('Song Admin CRUD tests', function () {
   before(function (done) {
     // Get application
     app = express.init(mongoose);
@@ -48,18 +48,18 @@ describe('Article Admin CRUD tests', function () {
       provider: 'local'
     });
 
-    // Save a user to the test db and create new article
+    // Save a user to the test db and create new song
     user.save(function () {
-      article = {
-        title: 'Article Title',
-        content: 'Article Content'
+      song = {
+        title: 'Song Title',
+        content: 'Song Content'
       };
 
       done();
     });
   });
 
-  it('should be able to save an article if logged in', function (done) {
+  it('should be able to save an song if logged in', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -72,30 +72,30 @@ describe('Article Admin CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new song
+        agent.post('/api/songs')
+          .send(song)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
-            // Handle article save error
-            if (articleSaveErr) {
-              return done(articleSaveErr);
+          .end(function (songSaveErr, songSaveRes) {
+            // Handle song save error
+            if (songSaveErr) {
+              return done(songSaveErr);
             }
 
-            // Get a list of articles
-            agent.get('/api/articles')
-              .end(function (articlesGetErr, articlesGetRes) {
-                // Handle article save error
-                if (articlesGetErr) {
-                  return done(articlesGetErr);
+            // Get a list of songs
+            agent.get('/api/songs')
+              .end(function (songsGetErr, songsGetRes) {
+                // Handle song save error
+                if (songsGetErr) {
+                  return done(songsGetErr);
                 }
 
-                // Get articles list
-                var articles = articlesGetRes.body;
+                // Get songs list
+                var songs = songsGetRes.body;
 
                 // Set assertions
-                (articles[0].user._id).should.equal(userId);
-                (articles[0].title).should.match('Article Title');
+                (songs[0].user._id).should.equal(userId);
+                (songs[0].title).should.match('Song Title');
 
                 // Call the assertion callback
                 done();
@@ -104,7 +104,7 @@ describe('Article Admin CRUD tests', function () {
       });
   });
 
-  it('should be able to update an article if signed in', function (done) {
+  it('should be able to update an song if signed in', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -117,32 +117,32 @@ describe('Article Admin CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new song
+        agent.post('/api/songs')
+          .send(song)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
-            // Handle article save error
-            if (articleSaveErr) {
-              return done(articleSaveErr);
+          .end(function (songSaveErr, songSaveRes) {
+            // Handle song save error
+            if (songSaveErr) {
+              return done(songSaveErr);
             }
 
-            // Update article title
-            article.title = 'WHY YOU GOTTA BE SO MEAN?';
+            // Update song title
+            song.title = 'WHY YOU GOTTA BE SO MEAN?';
 
-            // Update an existing article
-            agent.put('/api/articles/' + articleSaveRes.body._id)
-              .send(article)
+            // Update an existing song
+            agent.put('/api/songs/' + songSaveRes.body._id)
+              .send(song)
               .expect(200)
-              .end(function (articleUpdateErr, articleUpdateRes) {
-                // Handle article update error
-                if (articleUpdateErr) {
-                  return done(articleUpdateErr);
+              .end(function (songUpdateErr, songUpdateRes) {
+                // Handle song update error
+                if (songUpdateErr) {
+                  return done(songUpdateErr);
                 }
 
                 // Set assertions
-                (articleUpdateRes.body._id).should.equal(articleSaveRes.body._id);
-                (articleUpdateRes.body.title).should.match('WHY YOU GOTTA BE SO MEAN?');
+                (songUpdateRes.body._id).should.equal(songSaveRes.body._id);
+                (songUpdateRes.body.title).should.match('WHY YOU GOTTA BE SO MEAN?');
 
                 // Call the assertion callback
                 done();
@@ -151,9 +151,9 @@ describe('Article Admin CRUD tests', function () {
       });
   });
 
-  it('should not be able to save an article if no title is provided', function (done) {
+  it('should not be able to save an song if no title is provided', function (done) {
     // Invalidate title field
-    article.title = '';
+    song.title = '';
 
     agent.post('/api/auth/signin')
       .send(credentials)
@@ -167,21 +167,21 @@ describe('Article Admin CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new song
+        agent.post('/api/songs')
+          .send(song)
           .expect(422)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end(function (songSaveErr, songSaveRes) {
             // Set message assertion
-            (articleSaveRes.body.message).should.match('Title cannot be blank');
+            (songSaveRes.body.message).should.match('Title cannot be blank');
 
-            // Handle article save error
-            done(articleSaveErr);
+            // Handle song save error
+            done(songSaveErr);
           });
       });
   });
 
-  it('should be able to delete an article if signed in', function (done) {
+  it('should be able to delete an song if signed in', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -194,28 +194,28 @@ describe('Article Admin CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new song
+        agent.post('/api/songs')
+          .send(song)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
-            // Handle article save error
-            if (articleSaveErr) {
-              return done(articleSaveErr);
+          .end(function (songSaveErr, songSaveRes) {
+            // Handle song save error
+            if (songSaveErr) {
+              return done(songSaveErr);
             }
 
-            // Delete an existing article
-            agent.delete('/api/articles/' + articleSaveRes.body._id)
-              .send(article)
+            // Delete an existing song
+            agent.delete('/api/songs/' + songSaveRes.body._id)
+              .send(song)
               .expect(200)
-              .end(function (articleDeleteErr, articleDeleteRes) {
-                // Handle article error error
-                if (articleDeleteErr) {
-                  return done(articleDeleteErr);
+              .end(function (songDeleteErr, songDeleteRes) {
+                // Handle song error error
+                if (songDeleteErr) {
+                  return done(songDeleteErr);
                 }
 
                 // Set assertions
-                (articleDeleteRes.body._id).should.equal(articleSaveRes.body._id);
+                (songDeleteRes.body._id).should.equal(songSaveRes.body._id);
 
                 // Call the assertion callback
                 done();
@@ -224,10 +224,10 @@ describe('Article Admin CRUD tests', function () {
       });
   });
 
-  it('should be able to get a single article if signed in and verify the custom "isCurrentUserOwner" field is set to "true"', function (done) {
-    // Create new article model instance
-    article.user = user;
-    var articleObj = new Article(article);
+  it('should be able to get a single song if signed in and verify the custom "isCurrentUserOwner" field is set to "true"', function (done) {
+    // Create new song model instance
+    song.user = user;
+    var songObj = new Song(song);
 
     agent.post('/api/auth/signin')
       .send(credentials)
@@ -241,31 +241,31 @@ describe('Article Admin CRUD tests', function () {
         // Get the userId
         var userId = user.id;
 
-        // Save a new article
-        agent.post('/api/articles')
-          .send(article)
+        // Save a new song
+        agent.post('/api/songs')
+          .send(song)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
-            // Handle article save error
-            if (articleSaveErr) {
-              return done(articleSaveErr);
+          .end(function (songSaveErr, songSaveRes) {
+            // Handle song save error
+            if (songSaveErr) {
+              return done(songSaveErr);
             }
 
-            // Get the article
-            agent.get('/api/articles/' + articleSaveRes.body._id)
+            // Get the song
+            agent.get('/api/songs/' + songSaveRes.body._id)
               .expect(200)
-              .end(function (articleInfoErr, articleInfoRes) {
-                // Handle article error
-                if (articleInfoErr) {
-                  return done(articleInfoErr);
+              .end(function (songInfoErr, songInfoRes) {
+                // Handle song error
+                if (songInfoErr) {
+                  return done(songInfoErr);
                 }
 
                 // Set assertions
-                (articleInfoRes.body._id).should.equal(articleSaveRes.body._id);
-                (articleInfoRes.body.title).should.equal(article.title);
+                (songInfoRes.body._id).should.equal(songSaveRes.body._id);
+                (songInfoRes.body.title).should.equal(song.title);
 
                 // Assert that the "isCurrentUserOwner" field is set to true since the current User created it
-                (articleInfoRes.body.isCurrentUserOwner).should.equal(true);
+                (songInfoRes.body.isCurrentUserOwner).should.equal(true);
 
                 // Call the assertion callback
                 done();
@@ -276,7 +276,7 @@ describe('Article Admin CRUD tests', function () {
 
   afterEach(function (done) {
     User.remove().exec(function () {
-      Article.remove().exec(done);
+      Song.remove().exec(done);
     });
   });
 });

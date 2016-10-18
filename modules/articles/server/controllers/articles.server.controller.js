@@ -5,113 +5,113 @@
  */
 var path = require('path'),
   mongoose = require('mongoose'),
-  Article = mongoose.model('Article'),
+  Song = mongoose.model('Song'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
- * Create an article
+ * Create an song
  */
 exports.create = function (req, res) {
-  var article = new Article(req.body);
-  article.user = req.user;
+  var song = new Song(req.body);
+  song.user = req.user;
 
-  article.save(function (err) {
+  song.save(function (err) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(article);
+      res.json(song);
     }
   });
 };
 
 /**
- * Show the current article
+ * Show the current song
  */
 exports.read = function (req, res) {
   // convert mongoose document to JSON
-  var article = req.article ? req.article.toJSON() : {};
+  var song = req.song ? req.song.toJSON() : {};
 
-  // Add a custom field to the Article, for determining if the current User is the "owner".
-  // NOTE: This field is NOT persisted to the database, since it doesn't exist in the Article model.
-  article.isCurrentUserOwner = !!(req.user && article.user && article.user._id.toString() === req.user._id.toString());
+  // Add a custom field to the Song, for determining if the current User is the "owner".
+  // NOTE: This field is NOT persisted to the database, since it doesn't exist in the Song model.
+  song.isCurrentUserOwner = !!(req.user && song.user && song.user._id.toString() === req.user._id.toString());
 
-  res.json(article);
+  res.json(song);
 };
 
 /**
- * Update an article
+ * Update an song
  */
 exports.update = function (req, res) {
-  var article = req.article;
+  var song = req.song;
 
-  article.title = req.body.title;
-  article.content = req.body.content;
+  song.title = req.body.title;
+  song.content = req.body.content;
 
-  article.save(function (err) {
+  song.save(function (err) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(article);
+      res.json(song);
     }
   });
 };
 
 /**
- * Delete an article
+ * Delete an song
  */
 exports.delete = function (req, res) {
-  var article = req.article;
+  var song = req.song;
 
-  article.remove(function (err) {
+  song.remove(function (err) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(article);
+      res.json(song);
     }
   });
 };
 
 /**
- * List of Articles
+ * List of Songs
  */
 exports.list = function (req, res) {
-  Article.find().sort('-created').populate('user', 'displayName').exec(function (err, articles) {
+  Song.find().sort('-created').populate('user', 'displayName').exec(function (err, songs) {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.json(articles);
+      res.json(songs);
     }
   });
 };
 
 /**
- * Article middleware
+ * Song middleware
  */
-exports.articleByID = function (req, res, next, id) {
+exports.songByID = function (req, res, next, id) {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
-      message: 'Article is invalid'
+      message: 'Song is invalid'
     });
   }
 
-  Article.findById(id).populate('user', 'displayName').exec(function (err, article) {
+  Song.findById(id).populate('user', 'displayName').exec(function (err, song) {
     if (err) {
       return next(err);
-    } else if (!article) {
+    } else if (!song) {
       return res.status(404).send({
-        message: 'No article with that identifier has been found'
+        message: 'No song with that identifier has been found'
       });
     }
-    req.article = article;
+    req.song = song;
     next();
   });
 };

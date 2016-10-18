@@ -5,7 +5,7 @@ var should = require('should'),
   path = require('path'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
-  Article = mongoose.model('Article'),
+  Song = mongoose.model('Song'),
   express = require(path.resolve('./config/lib/express'));
 
 /**
@@ -15,12 +15,12 @@ var app,
   agent,
   credentials,
   user,
-  article;
+  song;
 
 /**
- * Article routes tests
+ * Song routes tests
  */
-describe('Article CRUD tests', function () {
+describe('Song CRUD tests', function () {
 
   before(function (done) {
     // Get application
@@ -48,18 +48,18 @@ describe('Article CRUD tests', function () {
       provider: 'local'
     });
 
-    // Save a user to the test db and create new article
+    // Save a user to the test db and create new song
     user.save(function () {
-      article = {
-        title: 'Article Title',
-        content: 'Article Content'
+      song = {
+        title: 'Song Title',
+        content: 'Song Content'
       };
 
       done();
     });
   });
 
-  it('should not be able to save an article if logged in without the "admin" role', function (done) {
+  it('should not be able to save an song if logged in without the "admin" role', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -69,28 +69,28 @@ describe('Article CRUD tests', function () {
           return done(signinErr);
         }
 
-        agent.post('/api/articles')
-          .send(article)
+        agent.post('/api/songs')
+          .send(song)
           .expect(403)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end(function (songSaveErr, songSaveRes) {
             // Call the assertion callback
-            done(articleSaveErr);
+            done(songSaveErr);
           });
 
       });
   });
 
-  it('should not be able to save an article if not logged in', function (done) {
-    agent.post('/api/articles')
-      .send(article)
+  it('should not be able to save an song if not logged in', function (done) {
+    agent.post('/api/songs')
+      .send(song)
       .expect(403)
-      .end(function (articleSaveErr, articleSaveRes) {
+      .end(function (songSaveErr, songSaveRes) {
         // Call the assertion callback
-        done(articleSaveErr);
+        done(songSaveErr);
       });
   });
 
-  it('should not be able to update an article if signed in without the "admin" role', function (done) {
+  it('should not be able to update an song if signed in without the "admin" role', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -100,24 +100,24 @@ describe('Article CRUD tests', function () {
           return done(signinErr);
         }
 
-        agent.post('/api/articles')
-          .send(article)
+        agent.post('/api/songs')
+          .send(song)
           .expect(403)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end(function (songSaveErr, songSaveRes) {
             // Call the assertion callback
-            done(articleSaveErr);
+            done(songSaveErr);
           });
       });
   });
 
-  it('should be able to get a list of articles if not signed in', function (done) {
-    // Create new article model instance
-    var articleObj = new Article(article);
+  it('should be able to get a list of songs if not signed in', function (done) {
+    // Create new song model instance
+    var songObj = new Song(song);
 
-    // Save the article
-    articleObj.save(function () {
-      // Request articles
-      request(app).get('/api/articles')
+    // Save the song
+    songObj.save(function () {
+      // Request songs
+      request(app).get('/api/songs')
         .end(function (req, res) {
           // Set assertion
           res.body.should.be.instanceof(Array).and.have.lengthOf(1);
@@ -129,16 +129,16 @@ describe('Article CRUD tests', function () {
     });
   });
 
-  it('should be able to get a single article if not signed in', function (done) {
-    // Create new article model instance
-    var articleObj = new Article(article);
+  it('should be able to get a single song if not signed in', function (done) {
+    // Create new song model instance
+    var songObj = new Song(song);
 
-    // Save the article
-    articleObj.save(function () {
-      request(app).get('/api/articles/' + articleObj._id)
+    // Save the song
+    songObj.save(function () {
+      request(app).get('/api/songs/' + songObj._id)
         .end(function (req, res) {
           // Set assertion
-          res.body.should.be.instanceof(Object).and.have.property('title', article.title);
+          res.body.should.be.instanceof(Object).and.have.property('title', song.title);
 
           // Call the assertion callback
           done();
@@ -146,31 +146,31 @@ describe('Article CRUD tests', function () {
     });
   });
 
-  it('should return proper error for single article with an invalid Id, if not signed in', function (done) {
+  it('should return proper error for single song with an invalid Id, if not signed in', function (done) {
     // test is not a valid mongoose Id
-    request(app).get('/api/articles/test')
+    request(app).get('/api/songs/test')
       .end(function (req, res) {
         // Set assertion
-        res.body.should.be.instanceof(Object).and.have.property('message', 'Article is invalid');
+        res.body.should.be.instanceof(Object).and.have.property('message', 'Song is invalid');
 
         // Call the assertion callback
         done();
       });
   });
 
-  it('should return proper error for single article which doesnt exist, if not signed in', function (done) {
-    // This is a valid mongoose Id but a non-existent article
-    request(app).get('/api/articles/559e9cd815f80b4c256a8f41')
+  it('should return proper error for single song which doesnt exist, if not signed in', function (done) {
+    // This is a valid mongoose Id but a non-existent song
+    request(app).get('/api/songs/559e9cd815f80b4c256a8f41')
       .end(function (req, res) {
         // Set assertion
-        res.body.should.be.instanceof(Object).and.have.property('message', 'No article with that identifier has been found');
+        res.body.should.be.instanceof(Object).and.have.property('message', 'No song with that identifier has been found');
 
         // Call the assertion callback
         done();
       });
   });
 
-  it('should not be able to delete an article if signed in without the "admin" role', function (done) {
+  it('should not be able to delete an song if signed in without the "admin" role', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
@@ -180,40 +180,40 @@ describe('Article CRUD tests', function () {
           return done(signinErr);
         }
 
-        agent.post('/api/articles')
-          .send(article)
+        agent.post('/api/songs')
+          .send(song)
           .expect(403)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end(function (songSaveErr, songSaveRes) {
             // Call the assertion callback
-            done(articleSaveErr);
+            done(songSaveErr);
           });
       });
   });
 
-  it('should not be able to delete an article if not signed in', function (done) {
-    // Set article user
-    article.user = user;
+  it('should not be able to delete an song if not signed in', function (done) {
+    // Set song user
+    song.user = user;
 
-    // Create new article model instance
-    var articleObj = new Article(article);
+    // Create new song model instance
+    var songObj = new Song(song);
 
-    // Save the article
-    articleObj.save(function () {
-      // Try deleting article
-      request(app).delete('/api/articles/' + articleObj._id)
+    // Save the song
+    songObj.save(function () {
+      // Try deleting song
+      request(app).delete('/api/songs/' + songObj._id)
         .expect(403)
-        .end(function (articleDeleteErr, articleDeleteRes) {
+        .end(function (songDeleteErr, songDeleteRes) {
           // Set message assertion
-          (articleDeleteRes.body.message).should.match('User is not authorized');
+          (songDeleteRes.body.message).should.match('User is not authorized');
 
-          // Handle article error error
-          done(articleDeleteErr);
+          // Handle song error error
+          done(songDeleteErr);
         });
 
     });
   });
 
-  it('should be able to get a single article that has an orphaned user reference', function (done) {
+  it('should be able to get a single song that has an orphaned user reference', function (done) {
     // Create orphan user creds
     var _creds = {
       usernameOrEmail: 'orphan',
@@ -250,22 +250,22 @@ describe('Article CRUD tests', function () {
           // Get the userId
           var orphanId = orphan._id;
 
-          // Save a new article
-          agent.post('/api/articles')
-            .send(article)
+          // Save a new song
+          agent.post('/api/songs')
+            .send(song)
             .expect(200)
-            .end(function (articleSaveErr, articleSaveRes) {
-              // Handle article save error
-              if (articleSaveErr) {
-                return done(articleSaveErr);
+            .end(function (songSaveErr, songSaveRes) {
+              // Handle song save error
+              if (songSaveErr) {
+                return done(songSaveErr);
               }
 
-              // Set assertions on new article
-              (articleSaveRes.body.title).should.equal(article.title);
-              should.exist(articleSaveRes.body.user);
-              should.equal(articleSaveRes.body.user._id, orphanId);
+              // Set assertions on new song
+              (songSaveRes.body.title).should.equal(song.title);
+              should.exist(songSaveRes.body.user);
+              should.equal(songSaveRes.body.user._id, orphanId);
 
-              // force the article to have an orphaned user reference
+              // force the song to have an orphaned user reference
               orphan.remove(function () {
                 // now signin with valid user
                 agent.post('/api/auth/signin')
@@ -277,19 +277,19 @@ describe('Article CRUD tests', function () {
                       return done(err);
                     }
 
-                    // Get the article
-                    agent.get('/api/articles/' + articleSaveRes.body._id)
+                    // Get the song
+                    agent.get('/api/songs/' + songSaveRes.body._id)
                       .expect(200)
-                      .end(function (articleInfoErr, articleInfoRes) {
-                        // Handle article error
-                        if (articleInfoErr) {
-                          return done(articleInfoErr);
+                      .end(function (songInfoErr, songInfoRes) {
+                        // Handle song error
+                        if (songInfoErr) {
+                          return done(songInfoErr);
                         }
 
                         // Set assertions
-                        (articleInfoRes.body._id).should.equal(articleSaveRes.body._id);
-                        (articleInfoRes.body.title).should.equal(article.title);
-                        should.equal(articleInfoRes.body.user, undefined);
+                        (songInfoRes.body._id).should.equal(songSaveRes.body._id);
+                        (songInfoRes.body.title).should.equal(song.title);
+                        should.equal(songInfoRes.body.user, undefined);
 
                         // Call the assertion callback
                         done();
@@ -301,16 +301,16 @@ describe('Article CRUD tests', function () {
     });
   });
 
-  it('should be able to get a single article if not signed in and verify the custom "isCurrentUserOwner" field is set to "false"', function (done) {
-    // Create new article model instance
-    var articleObj = new Article(article);
+  it('should be able to get a single song if not signed in and verify the custom "isCurrentUserOwner" field is set to "false"', function (done) {
+    // Create new song model instance
+    var songObj = new Song(song);
 
-    // Save the article
-    articleObj.save(function () {
-      request(app).get('/api/articles/' + articleObj._id)
+    // Save the song
+    songObj.save(function () {
+      request(app).get('/api/songs/' + songObj._id)
         .end(function (req, res) {
           // Set assertion
-          res.body.should.be.instanceof(Object).and.have.property('title', article.title);
+          res.body.should.be.instanceof(Object).and.have.property('title', song.title);
           // Assert the custom field "isCurrentUserOwner" is set to false for the un-authenticated User
           res.body.should.be.instanceof(Object).and.have.property('isCurrentUserOwner', false);
           // Call the assertion callback
@@ -319,15 +319,15 @@ describe('Article CRUD tests', function () {
     });
   });
 
-  it('should be able to get single article, that a different user created, if logged in & verify the "isCurrentUserOwner" field is set to "false"', function (done) {
+  it('should be able to get single song, that a different user created, if logged in & verify the "isCurrentUserOwner" field is set to "false"', function (done) {
     // Create temporary user creds
     var _creds = {
-      usernameOrEmail: 'articleowner',
+      usernameOrEmail: 'songowner',
       password: 'M3@n.jsI$Aw3$0m3'
     };
 
-    // Create user that will create the Article
-    var _articleOwner = new User({
+    // Create user that will create the Song
+    var _songOwner = new User({
       firstName: 'Full',
       lastName: 'Name',
       displayName: 'Full Name',
@@ -338,13 +338,13 @@ describe('Article CRUD tests', function () {
       roles: ['admin', 'user']
     });
 
-    _articleOwner.save(function (err, _user) {
+    _songOwner.save(function (err, _user) {
       // Handle save error
       if (err) {
         return done(err);
       }
 
-      // Sign in with the user that will create the Article
+      // Sign in with the user that will create the Song
       agent.post('/api/auth/signin')
         .send(_creds)
         .expect(200)
@@ -357,20 +357,20 @@ describe('Article CRUD tests', function () {
           // Get the userId
           var userId = _user._id;
 
-          // Save a new article
-          agent.post('/api/articles')
-            .send(article)
+          // Save a new song
+          agent.post('/api/songs')
+            .send(song)
             .expect(200)
-            .end(function (articleSaveErr, articleSaveRes) {
-              // Handle article save error
-              if (articleSaveErr) {
-                return done(articleSaveErr);
+            .end(function (songSaveErr, songSaveRes) {
+              // Handle song save error
+              if (songSaveErr) {
+                return done(songSaveErr);
               }
 
-              // Set assertions on new article
-              (articleSaveRes.body.title).should.equal(article.title);
-              should.exist(articleSaveRes.body.user);
-              should.equal(articleSaveRes.body.user._id, userId);
+              // Set assertions on new song
+              (songSaveRes.body.title).should.equal(song.title);
+              should.exist(songSaveRes.body.user);
+              should.equal(songSaveRes.body.user._id, userId);
 
               // now signin with the test suite user
               agent.post('/api/auth/signin')
@@ -382,20 +382,20 @@ describe('Article CRUD tests', function () {
                     return done(err);
                   }
 
-                  // Get the article
-                  agent.get('/api/articles/' + articleSaveRes.body._id)
+                  // Get the song
+                  agent.get('/api/songs/' + songSaveRes.body._id)
                     .expect(200)
-                    .end(function (articleInfoErr, articleInfoRes) {
-                      // Handle article error
-                      if (articleInfoErr) {
-                        return done(articleInfoErr);
+                    .end(function (songInfoErr, songInfoRes) {
+                      // Handle song error
+                      if (songInfoErr) {
+                        return done(songInfoErr);
                       }
 
                       // Set assertions
-                      (articleInfoRes.body._id).should.equal(articleSaveRes.body._id);
-                      (articleInfoRes.body.title).should.equal(article.title);
+                      (songInfoRes.body._id).should.equal(songSaveRes.body._id);
+                      (songInfoRes.body.title).should.equal(song.title);
                       // Assert that the custom field "isCurrentUserOwner" is set to false since the current User didn't create it
-                      (articleInfoRes.body.isCurrentUserOwner).should.equal(false);
+                      (songInfoRes.body.isCurrentUserOwner).should.equal(false);
 
                       // Call the assertion callback
                       done();
@@ -408,7 +408,7 @@ describe('Article CRUD tests', function () {
 
   afterEach(function (done) {
     User.remove().exec(function () {
-      Article.remove().exec(done);
+      Song.remove().exec(done);
     });
   });
 });

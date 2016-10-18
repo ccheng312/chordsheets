@@ -1,65 +1,65 @@
-﻿(function () {
+(function () {
   'use strict';
 
   angular
-    .module('articles.admin.routes')
+    .module('songs.admin.routes')
     .config(routeConfig);
 
   routeConfig.$inject = ['$stateProvider'];
 
   function routeConfig($stateProvider) {
     $stateProvider
-      .state('admin.articles', {
+      .state('admin.songs', {
         abstract: true,
-        url: '/articles',
+        url: '/songs',
         template: '<ui-view/>'
       })
-      .state('admin.articles.list', {
+      .state('admin.songs.list', {
         url: '',
-        templateUrl: '/modules/articles/client/views/admin/list-articles.client.view.html',
-        controller: 'ArticlesAdminListController',
+        templateUrl: '/modules/songs/client/views/admin/list-songs.client.view.html',
+        controller: 'SongsAdminListController',
         controllerAs: 'vm',
         data: {
           roles: ['admin']
         }
       })
-      .state('admin.articles.create', {
+      .state('admin.songs.create', {
         url: '/create',
-        templateUrl: '/modules/articles/client/views/admin/form-article.client.view.html',
-        controller: 'ArticlesAdminController',
+        templateUrl: '/modules/songs/client/views/admin/form-song.client.view.html',
+        controller: 'SongsAdminController',
         controllerAs: 'vm',
         data: {
           roles: ['admin']
         },
         resolve: {
-          articleResolve: newArticle
+          songResolve: newSong
         }
       })
-      .state('admin.articles.edit', {
-        url: '/:articleId/edit',
-        templateUrl: '/modules/articles/client/views/admin/form-article.client.view.html',
-        controller: 'ArticlesAdminController',
+      .state('admin.songs.edit', {
+        url: '/:songId/edit',
+        templateUrl: '/modules/songs/client/views/admin/form-song.client.view.html',
+        controller: 'SongsAdminController',
         controllerAs: 'vm',
         data: {
           roles: ['admin']
         },
         resolve: {
-          articleResolve: getArticle
+          songResolve: getSong
         }
       });
   }
 
-  getArticle.$inject = ['$stateParams', 'ArticlesService'];
+  getSong.$inject = ['$stateParams', 'SongsService'];
 
-  function getArticle($stateParams, ArticlesService) {
-    return ArticlesService.get({
-      articleId: $stateParams.articleId
+  function getSong($stateParams, SongsService) {
+    return SongsService.get({
+      songId: $stateParams.songId
     }).$promise;
   }
 
-  newArticle.$inject = ['ArticlesService'];
+  newSong.$inject = ['SongsService'];
 
-  function newArticle(ArticlesService) {
-    return new ArticlesService();
+  function newSong(SongsService) {
+    return new SongsService();
   }
 }());

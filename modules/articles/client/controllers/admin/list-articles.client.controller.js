@@ -1,15 +1,15 @@
-﻿(function () {
+(function () {
   'use strict';
 
   angular
-    .module('articles.admin')
-    .controller('ArticlesAdminListController', ArticlesAdminListController);
+    .module('songs.admin')
+    .controller('SongsAdminListController', SongsAdminListController);
 
-  ArticlesAdminListController.$inject = ['ArticlesService'];
+  SongsAdminListController.$inject = ['SongsService'];
 
-  function ArticlesAdminListController(ArticlesService) {
+  function SongsAdminListController(SongsService) {
     var vm = this;
 
-    vm.articles = ArticlesService.query();
+    vm.songs = SongsService.query();
   }
 }());

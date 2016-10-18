@@ -1,17 +1,17 @@
-﻿(function () {
+(function () {
   'use strict';
 
-  // Configuring the Articles Admin module
+  // Configuring the Songs Admin module
   angular
-    .module('articles.admin')
+    .module('songs.admin')
     .run(menuConfig);
 
   menuConfig.$inject = ['menuService'];
 
   function menuConfig(Menus) {
     Menus.addSubMenuItem('topbar', 'admin', {
-      title: 'Manage Articles',
-      state: 'admin.articles.list'
+      title: 'Manage Songs',
+      state: 'admin.songs.list'
     });
   }
 }());

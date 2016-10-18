@@ -3,21 +3,21 @@
 /**
  * Module dependencies
  */
-var articlesPolicy = require('../policies/articles.server.policy'),
-  articles = require('../controllers/articles.server.controller');
+var songsPolicy = require('../policies/songs.server.policy'),
+  songs = require('../controllers/songs.server.controller');
 
 module.exports = function (app) {
-  // Articles collection routes
-  app.route('/api/articles').all(articlesPolicy.isAllowed)
-    .get(articles.list)
-    .post(articles.create);
+  // Songs collection routes
+  app.route('/api/songs').all(songsPolicy.isAllowed)
+    .get(songs.list)
+    .post(songs.create);
 
-  // Single article routes
-  app.route('/api/articles/:articleId').all(articlesPolicy.isAllowed)
-    .get(articles.read)
-    .put(articles.update)
-    .delete(articles.delete);
+  // Single song routes
+  app.route('/api/songs/:songId').all(songsPolicy.isAllowed)
+    .get(songs.read)
+    .put(songs.update)
+    .delete(songs.delete);
 
-  // Finish by binding the article middleware
-  app.param('articleId', articles.articleByID);
+  // Finish by binding the song middleware
+  app.param('songId', songs.songByID);
 };

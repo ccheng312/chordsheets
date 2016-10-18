@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
   'use strict';
 
   describe('Edit Profile Controller Tests', function () {
@@ -62,7 +62,7 @@
         roles: ['user']
       };
 
-      // Initialize the Articles controller.
+      // Initialize the Profile controller.
       EditProfileController = $controller('EditProfileController as vm', {
         $scope: $scope
       });

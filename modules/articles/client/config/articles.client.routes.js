@@ -2,46 +2,46 @@
   'use strict';
 
   angular
-    .module('articles.routes')
+    .module('songs.routes')
     .config(routeConfig);
 
   routeConfig.$inject = ['$stateProvider'];
 
   function routeConfig($stateProvider) {
     $stateProvider
-      .state('articles', {
+      .state('songs', {
         abstract: true,
-        url: '/articles',
+        url: '/songs',
         template: '<ui-view/>'
       })
-      .state('articles.list', {
+      .state('songs.list', {
         url: '',
-        templateUrl: '/modules/articles/client/views/list-articles.client.view.html',
-        controller: 'ArticlesListController',
+        templateUrl: '/modules/songs/client/views/list-songs.client.view.html',
+        controller: 'SongsListController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Articles List'
+          pageTitle: 'Songs List'
         }
       })
-      .state('articles.view', {
-        url: '/:articleId',
-        templateUrl: '/modules/articles/client/views/view-article.client.view.html',
-        controller: 'ArticlesController',
+      .state('songs.view', {
+        url: '/:songId',
+        templateUrl: '/modules/songs/client/views/view-song.client.view.html',
+        controller: 'SongsController',
         controllerAs: 'vm',
         resolve: {
-          articleResolve: getArticle
+          songResolve: getSong
         },
         data: {
-          pageTitle: 'Article {{ articleResolve.title }}'
+          pageTitle: 'Song {{ songResolve.title }}'
         }
       });
   }
 
-  getArticle.$inject = ['$stateParams', 'ArticlesService'];
+  getSong.$inject = ['$stateParams', 'SongsService'];
 
-  function getArticle($stateParams, ArticlesService) {
-    return ArticlesService.get({
-      articleId: $stateParams.articleId
+  function getSong($stateParams, SongsService) {
+    return SongsService.get({
+      songId: $stateParams.songId
     }).$promise;
   }
 }());
