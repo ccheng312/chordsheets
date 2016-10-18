@@ -52,6 +52,7 @@ describe('Song CRUD tests', function () {
     user.save(function () {
       song = {
         title: 'Song Title',
+        defaultKey: 'A',
         content: 'Song Content'
       };
 

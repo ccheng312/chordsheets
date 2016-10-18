@@ -1,23 +1,24 @@
 <section>
   <div class="page-header">
     <h1>
-      Songs
+      Manage Songs
       <a class="btn btn-primary pull-right" data-ui-sref="admin.songs.create">
         <i class="glyphicon glyphicon-plus"></i>
       </a>
     </h1>
   </div>
+  <input class="form-control" type="text" placeholder="Search" ng-model="searchText">
+  <br>
   <div class="list-group">
-    <a data-ng-repeat="song in vm.songs" data-ui-sref="admin.songs.edit({songId: song._id})" class="list-group-item">
-      <small class="list-group-item-text">
-        Posted on
-        <span data-ng-bind="song.created | date:'mediumDate'"></span>
-        by
-        <span ng-if="song.user" ng-bind="song.user.displayName"></span>
-        <span ng-if="!song.user">Deleted User</span>
+    <a data-ng-repeat="song in vm.songs | filter:searchText | orderBy:'title'" data-ui-sref="admin.songs.edit({songId: song._id})" class="list-group-item">
+      <h4 class="list-group-item-heading" ng-bind="song.title"></h4>
+			<small class="list-group-item-text">
+				by <span ng-bind="song.artist"></span>
+			</small>
+      <small class="list-group-item-text pull-right">
+        Key: <strong ng-bind="song.defaultKey"></strong>
+        | BPM: <strong ng-bind="song.bpm"></strong>
       </small>
-      <h4 class="list-group-item-heading" data-ng-bind="song.title"></h4>
-      <p class="list-group-item-text" data-ng-bind="song.content"></p>
     </a>
   </div>
   <div class="alert alert-warning text-center" data-ng-if="songs.$resolved && !songs.length">

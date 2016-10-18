@@ -18,6 +18,20 @@
           </div>
         </div>
         <div class="form-group">
+          <label class="control-label" for="artist">Artist</label>
+          <input name="artist" type="text" ng-model="vm.song.artist" id="artist" class="form-control" placeholder="Artist">
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="defaultKey">Default Key</label>
+          <div class="controls">
+            <select name="defaultKey" ng-model="vm.song.defaultKey" id="defaultKey" class="form-control" ng-options="key group by vm.mode(key) for key in vm.keys" required></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="bpm">BPM</label>
+          <input name="bpm" type="text" ng-model="vm.song.bpm" id="bpm" class="form-control" placeholder="BPM">
+        </div>
+        <div class="form-group">
           <label class="control-label" for="content">Content</label>
           <textarea name="content" data-ng-model="vm.song.content" id="content" class="form-control" cols="30" rows="10" placeholder="Content"></textarea>
         </div>

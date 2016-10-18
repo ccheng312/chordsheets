@@ -2,17 +2,18 @@
   <div class="page-header">
     <h1>Songs</h1>
   </div>
+  <input class="form-control" type="text" placeholder="Search" ng-model="searchText">
+  <br>
   <div class="list-group">
-    <a ng-repeat="song in vm.songs" ui-sref="songs.view({ songId: song._id })" class="list-group-item">
-      <small class="list-group-item-text">
-        Posted on
-        <span ng-bind="song.created | date:'mediumDate'"></span>
-        by
-        <span ng-if="song.user" ng-bind="song.user.displayName"></span>
-        <span ng-if="!song.user">Deleted User</span>
-      </small>
+    <a ng-repeat="song in vm.songs | filter:searchText | orderBy:'title'" ui-sref="songs.view({ songId: song._id })" class="list-group-item">
       <h4 class="list-group-item-heading" ng-bind="song.title"></h4>
-      <p class="list-group-item-text" ng-bind="song.content"></p>
+			<small class="list-group-item-text">
+				by <span ng-bind="song.artist"></span>
+			</small>
+      <small class="list-group-item-text pull-right">
+        Key: <strong ng-bind="song.defaultKey"></strong>
+        | BPM: <strong ng-bind="song.bpm"></strong>
+      </small>
     </a>
   </div>
 </section>

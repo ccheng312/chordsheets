@@ -5,9 +5,9 @@
     .module('songs.admin')
     .controller('SongsAdminController', SongsAdminController);
 
-  SongsAdminController.$inject = ['$scope', '$state', '$window', 'songResolve', 'Authentication', 'Notification'];
+  SongsAdminController.$inject = ['$scope', '$state', '$window', 'songResolve', 'ChordsService', 'Authentication', 'Notification'];
 
-  function SongsAdminController($scope, $state, $window, song, Authentication, Notification) {
+  function SongsAdminController($scope, $state, $window, song, chords, Authentication, Notification) {
     var vm = this;
 
     vm.song = song;
@@ -15,6 +15,8 @@
     vm.form = {};
     vm.remove = remove;
     vm.save = save;
+    vm.keys = chords.keys();
+    vm.mode = chords.mode;
 
     // Remove existing Song
     function remove() {

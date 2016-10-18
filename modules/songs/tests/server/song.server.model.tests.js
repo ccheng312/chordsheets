@@ -33,6 +33,7 @@ describe('Song Model Unit Tests:', function () {
       song = new Song({
         title: 'Song Title',
         content: 'Song Content',
+        defaultKey: 'A',
         user: user
       });
 

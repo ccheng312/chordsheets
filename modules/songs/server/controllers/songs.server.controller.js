@@ -47,6 +47,9 @@ exports.update = function (req, res) {
   var song = req.song;
 
   song.title = req.body.title;
+  song.artist = req.body.artist;
+  song.defaultKey = req.body.defaultKey;
+  song.bpm = req.body.bpm;
   song.content = req.body.content;
 
   song.save(function (err) {

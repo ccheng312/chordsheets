@@ -1,8 +1,22 @@
 <section>
   <div class="page-header">
-    <h1 ng-bind="vm.song.title"></h1>
+    <div class="pull-right">
+    <form class="form-inline">
+        <label>Key:</label>
+        <select class="form-control" ng-model="vm.key" ng-options="key group by vm.mode(key) for key in vm.keys"></select>
+    </form>
+    <div>
+        <strong>BPM:</strong>
+        <strong class="pull-right" ng-bind="vm.song.bpm"></strong>
+    </div>
+</div>
+<h1>
+    <span ng-bind="vm.song.title"></span>
+    <small>- <span ng-bind="vm.song.artist"></span></small>
+</h1>
   </div>
-  <small>
+  <p class="chordsheet" ng-bind-html="vm.chordpro.format(vm.song.content, vm.song.defaultKey, vm.key)"></p>
+  <small class="pull-right">
     <em class="text-muted">
       Posted on
       <span ng-bind="vm.song.created | date:'mediumDate'"></span>
@@ -11,5 +25,4 @@
       <span ng-if="!vm.song.user">Deleted User</span>
     </em>
   </small>
-  <p class="lead" ng-bind="vm.song.content"></p>
 </section>
