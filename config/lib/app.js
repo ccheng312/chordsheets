@@ -17,10 +17,11 @@ function seedDB() {
 }
 
 // Initialize Models
-mongoose.loadModels(seedDB);
+mongoose.loadModels();
 
 module.exports.init = function init(callback) {
   mongoose.connect(function (db) {
+    seedDB();
     // Initialize express
     var app = express.init(db);
     if (callback) callback(app, db, config);

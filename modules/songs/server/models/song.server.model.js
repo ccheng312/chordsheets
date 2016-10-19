@@ -17,6 +17,7 @@ var SongSchema = new Schema({
   title: {
     type: String,
     trim: true,
+    unique: true,
     required: 'Title cannot be blank'
   },
   artist: {

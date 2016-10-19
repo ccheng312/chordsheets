@@ -36,6 +36,27 @@ function saveUser (user) {
   };
 }
 
+function saveSongIfAbsent (song) {
+  return function(isAbsent) {
+    return new Promise(function (resolve, reject) {
+      if (isAbsent) {
+        song.save(function (err, thesong) {
+          if (err) {
+            reject(new Error('Failed to add song' + song.title));
+          } else {
+            resolve(thesong);
+          }
+        });
+      } else {
+        if (seedOptions.logResults) {
+          console.log(chalk.bold.red('Database Seeding:\tSong already exists: ' + song.title));
+        }
+        resolve();
+      }
+    });
+  };
+}
+
 function checkUserNotExists (user) {
   return new Promise(function (resolve, reject) {
     var User = mongoose.model('User');
@@ -53,11 +74,23 @@ function checkUserNotExists (user) {
   });
 }
 
+function checkSongNotExists (song) {
+  return new Promise(function (resolve, reject) {
+    var Song = mongoose.model('Song');
+    Song.find({ title: song.title }, function (err, songs) {
+      if (err) {
+        reject(new Error('Failed to find song ' + song.title));
+      }
+      resolve(songs.length === 0);
+    });
+  });
+}
+
 function reportSuccess (password) {
   return function (user) {
     return new Promise(function (resolve, reject) {
       if (seedOptions.logResults) {
-        console.log(chalk.bold.red('Database Seeding:\t\t\tLocal ' + user.username + ' added with password set to ' + password));
+        console.log(chalk.bold.red('Database Seeding:\tLocal ' + user.username + ' added with password set to ' + password));
       }
       resolve();
     });
@@ -68,8 +101,6 @@ function reportSuccess (password) {
 function seedTheUser (user) {
   return function (password) {
     return new Promise(function (resolve, reject) {
-
-      var User = mongoose.model('User');
       // set the new password
       user.password = password;
 
@@ -98,12 +129,29 @@ function seedTheUser (user) {
   };
 }
 
+// save the specified song if it doesn't already exist
+function seedTheSong (song) {
+  return new Promise(function (resolve, reject) {
+    checkSongNotExists(song)
+      .then(saveSongIfAbsent(song))
+      .then(function (song) {
+        if (song && seedOptions.logResults) {
+          console.log(chalk.bold.red('Database Seeding:\tSong ' + song.title + ' added'));
+        }
+        resolve();
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+}
+
 // report the error
 function reportError (reject) {
   return function (err) {
     if (seedOptions.logResults) {
       console.log();
-      console.log('Database Seeding:\t\t\t' + err);
+      console.log('Database Seeding:\t' + err);
       console.log();
     }
     reject(err);
@@ -128,11 +176,17 @@ module.exports.start = function start(options) {
     seedOptions.seedAdmin = options.seedAdmin;
   }
 
+  if (_.has(options, 'seedSong')) {
+    seedOptions.seedSong = options.seedSong;
+  }
+
   var User = mongoose.model('User');
+  var Song = mongoose.model('Song');
   return new Promise(function (resolve, reject) {
 
     var adminAccount = new User(seedOptions.seedAdmin);
     var userAccount = new User(seedOptions.seedUser);
+    var song = new Song(seedOptions.seedSong);
 
     // If production only seed admin if it does not exist
     if (process.env.NODE_ENV === 'production') {
@@ -149,6 +203,7 @@ module.exports.start = function start(options) {
         .then(seedTheUser(userAccount))
         .then(User.generateRandomPassphrase)
         .then(seedTheUser(adminAccount))
+        .then(seedTheSong(song))
         .then(function () {
           resolve();
         })
