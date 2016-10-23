@@ -48,7 +48,7 @@ exports.invokeRolesPolicies = function () {
 exports.isAllowed = function (req, res, next) {
   var roles = (req.user) ? req.user.roles : ['guest'];
 
-  // If an song is being processed and the current user created it then allow any manipulation
+  // If a song is being processed and the current user created it then allow any manipulation
   if (req.song && req.user && req.song.user && req.song.user.id === req.user.id) {
     return next();
   }

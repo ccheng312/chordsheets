@@ -45,9 +45,9 @@ module.exports.start = function start(callback) {
       console.log(chalk.green('Environment:     ' + process.env.NODE_ENV));
       console.log(chalk.green('Server:          ' + server));
       console.log(chalk.green('Database:        ' + config.db.uri));
-      console.log(chalk.green('App version:     ' + config.meanjs.version));
-      if (config.meanjs['meanjs-version'])
-        console.log(chalk.green('MEAN.JS version: ' + config.meanjs['meanjs-version']));
+      console.log(chalk.green('App version:     ' + config.chordsheets.version));
+      if (config.chordsheets['meanjs-version'])
+        console.log(chalk.green('MEAN.JS version: ' + config.chordsheets['meanjs-version']));
       console.log('--');
 
       if (callback) callback(app, db, config);

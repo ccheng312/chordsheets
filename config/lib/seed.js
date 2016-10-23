@@ -27,6 +27,7 @@ function saveUser (user) {
       // Then save the user
       user.save(function (err, theuser) {
         if (err) {
+          console.log(chalk.bold.red(err));
           reject(new Error('Failed to add local ' + user.username));
         } else {
           resolve(theuser);

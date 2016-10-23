@@ -19,7 +19,7 @@ module.exports = function (karmaConfig) {
     },
 
     ngHtml2JsPreprocessor: {
-      moduleName: 'mean',
+      moduleName: 'chordsheets',
 
       cacheIdFromPath: function (filepath) {
         return filepath;

@@ -129,7 +129,7 @@ describe('Song Admin CRUD tests', function () {
             }
 
             // Update song title
-            song.title = 'WHY YOU GOTTA BE SO MEAN?';
+            song.title = 'New Title';
 
             // Update an existing song
             agent.put('/api/songs/' + songSaveRes.body._id)
@@ -143,7 +143,7 @@ describe('Song Admin CRUD tests', function () {
 
                 // Set assertions
                 (songUpdateRes.body._id).should.equal(songSaveRes.body._id);
-                (songUpdateRes.body.title).should.match('WHY YOU GOTTA BE SO MEAN?');
+                (songUpdateRes.body.title).should.match('New Title');
 
                 // Call the assertion callback
                 done();

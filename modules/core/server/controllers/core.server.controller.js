@@ -5,6 +5,13 @@ var validator = require('validator'),
   config = require(path.resolve('./config/config'));
 
 /**
+ * Health check
+ */
+exports.healthCheck = function (req, res) {
+  res.status(200).send({ ok: true });
+};
+
+/**
  * Render the main application page
  */
 exports.renderIndex = function (req, res) {

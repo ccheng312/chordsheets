@@ -54,8 +54,8 @@
       // create mock song
       mockSong = new SongsService({
         _id: '525a8422f6d0f87f0e407a33',
-        title: 'An Song about MEAN',
-        content: 'MEAN rocks!'
+        title: 'A Test Song',
+        content: 'This is just a test'
       });
 
       // Mock logged in user
@@ -81,8 +81,8 @@
       beforeEach(function () {
         // Create a sample song object
         sampleSongPostData = new SongsService({
-          title: 'An Song about MEAN',
-          content: 'MEAN rocks!'
+          title: 'A Test Song',
+          content: 'This is just a test'
         });
 
         $scope.vm.song = sampleSongPostData;

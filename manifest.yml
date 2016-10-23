@@ -1,13 +1,13 @@
 ---
 declared-services:
-  mean-mongo:
+  chordsheets-mongo:
     label: mongodb
     plan: 100
 applications:
-- name: mean
-  host: mean-${random-word}
+- name: chordsheets
+  host: chordsheets-${random-word}
   memory: 128M
   services:
-  - mean-mongo
+  - chordsheets-mongo
   env:
     NODE_ENV: cloud-foundry
