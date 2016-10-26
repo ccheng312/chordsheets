@@ -5,9 +5,12 @@
     .module('songs.admin')
     .controller('SongsAdminController', SongsAdminController);
 
-  SongsAdminController.$inject = ['$scope', '$state', '$window', 'songResolve', 'ChordsService', 'Authentication', 'Notification'];
+  SongsAdminController.$inject = [
+    '$scope', '$state', '$window', 'songResolve',
+    'ChordsService', 'ChordProService', 'Authentication', 'Notification'
+  ];
 
-  function SongsAdminController($scope, $state, $window, song, chords, Authentication, Notification) {
+  function SongsAdminController($scope, $state, $window, song, chords, chordpro, Authentication, Notification) {
     var vm = this;
 
     vm.song = song;
@@ -17,6 +20,18 @@
     vm.save = save;
     vm.keys = chords.keys();
     vm.mode = chords.mode;
+    vm.chordpro = chordpro;
+    vm.formatPreview = formatPreview;
+    vm.parsePreview = parsePreview;
+    vm.preview = null;
+
+    function formatPreview() {
+      vm.preview = vm.song.content ? chordpro.formatRaw(vm.song.content) : '';
+    }
+    function parsePreview() {
+      vm.song.content = vm.preview ? chordpro.parse(vm.preview) : vm.song.content;
+      vm.preview = null;
+    }
 
     // Remove existing Song
     function remove() {
@@ -30,6 +45,9 @@
 
     // Save Song
     function save(isValid) {
+      if (vm.preview) {
+        parsePreview();
+      }
       if (!isValid) {
         $scope.$broadcast('show-errors-check-validity', 'vm.form.songForm');
         return false;
