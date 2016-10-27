@@ -107,13 +107,35 @@
       return note + modifier + bass;
     }
 
+    var _majorKeys = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+    var _minorKeys = ['Am', 'Bbm', 'Bm', 'Cm', 'C#m', 'Dm', 'Ebm', 'Em', 'Fm', 'F#m', 'Gm', 'G#m'];
+
     function keys() {
-      return ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B',
-              'Am', 'Bbm', 'Bm', 'Cm', 'C#m', 'Dm', 'Ebm', 'Em', 'Fm', 'F#m', 'Gm', 'G#m'];
+      return _majorKeys.concat(_minorKeys);
     }
 
     function mode(key) {
       return key.indexOf('m') > -1 ? 'Minor' : 'Major';
+    }
+
+    function transposeKey(key, amount) {
+      var keys;
+      if (mode(key) === 'Major') {
+        keys = _majorKeys;
+      } else if (mode(key) === 'Minor') {
+        keys = _minorKeys;
+      }
+      if (keys) {
+        var index = keys.indexOf(key);
+        if (index > -1) {
+          var newIndex = (index + amount) % 12;
+          if (newIndex < 0) {
+            newIndex += 12;
+          }
+          return keys[newIndex];
+        }
+      }
+      throw new Error('unknown key: ' + key);
     }
 
     return {
@@ -133,6 +155,7 @@
       // For populating key select elements
       keys: keys,
       mode: mode,
+      transposeKey: transposeKey,
 
       // helper methods, exposed for testing
       getNote: getNote,

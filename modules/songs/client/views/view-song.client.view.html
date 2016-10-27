@@ -3,7 +3,13 @@
     <div class="pull-right">
     <form class="form-inline">
         <label>Key:</label>
+        <a class="btn btn-primary" ng-click="vm.transposeDown()">
+          <i class="glyphicon glyphicon-minus"></i>
+        </a>
         <select class="form-control" ng-model="vm.key" ng-options="key group by vm.mode(key) for key in vm.keys"></select>
+        <a class="btn btn-primary" ng-click="vm.transposeUp()">
+          <i class="glyphicon glyphicon-plus"></i>
+        </a>
     </form>
     <div>
         <strong>BPM:</strong>

@@ -16,5 +16,16 @@
     vm.authentication = Authentication;
     vm.keys = chords.keys();
     vm.mode = chords.mode;
+    vm.transposeDown = transposeDown;
+    vm.transposeUp = transposeUp;
+
+    function transposeUp() {
+      vm.key = chords.transposeKey(vm.key, 1);
+    }
+
+    function transposeDown() {
+      vm.key = chords.transposeKey(vm.key, -1);
+    }
+
   }
 }());
