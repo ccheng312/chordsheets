@@ -2,15 +2,15 @@
   'use strict';
 
   angular
-    .module('songs.admin')
-    .controller('SongsAdminController', SongsAdminController);
+    .module('songs')
+    .controller('SongsEditController', SongsEditController);
 
-  SongsAdminController.$inject = [
+  SongsEditController.$inject = [
     '$scope', '$state', '$window', 'songResolve',
     'ChordsService', 'ChordProService', 'Authentication', 'Notification'
   ];
 
-  function SongsAdminController($scope, $state, $window, song, chords, chordpro, Authentication, Notification) {
+  function SongsEditController($scope, $state, $window, song, chords, chordpro, Authentication, Notification) {
     var vm = this;
 
     vm.song = song;
@@ -37,7 +37,7 @@
     function remove() {
       if ($window.confirm('Are you sure you want to delete?')) {
         vm.song.$remove(function() {
-          $state.go('admin.songs.list');
+          $state.go('songs.list');
           Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Song deleted successfully!' });
         });
       }
@@ -59,7 +59,7 @@
         .catch(errorCallback);
 
       function successCallback(res) {
-        $state.go('admin.songs.list'); // should we send the User to the list or the updated Song's view?
+        $state.go('songs.list'); // should we send the User to the list or the updated Song's view?
         Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Song saved successfully!' });
       }
 

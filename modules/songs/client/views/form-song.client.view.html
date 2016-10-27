@@ -3,7 +3,7 @@
     <h1>{{vm.song._id ? 'Edit Song' : 'New Song'}}</h1>
   </div>
   <div class="pull-right">
-    <a ng-show="vm.song._id" class="btn btn-primary" ng-click="vm.remove()">
+    <a uib-tooltip="Delete Song" ng-show="vm.song._id" class="btn btn-primary" ng-click="vm.remove()">
       <i class="glyphicon glyphicon-trash"></i>
     </a>
   </div>

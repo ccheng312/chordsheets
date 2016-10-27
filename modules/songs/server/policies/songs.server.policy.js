@@ -25,7 +25,7 @@ exports.invokeRolesPolicies = function () {
     roles: ['user'],
     allows: [{
       resources: '/api/songs',
-      permissions: ['get']
+      permissions: ['*']
     }, {
       resources: '/api/songs/:songId',
       permissions: ['get']

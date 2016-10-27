@@ -60,219 +60,178 @@ describe('Song Admin CRUD tests', function () {
     });
   });
 
-  it('should be able to save an song if logged in', function (done) {
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
+  it('admins should be able to update a song that a different user created', function (done) {
+    // Create temporary user creds
+    var _creds = {
+      usernameOrEmail: 'songowner',
+      password: 'M3@n.jsI$Aw3$0m3'
+    };
 
-        // Get the userId
-        var userId = user.id;
+    // Create user that will create the Song
+    var _songOwner = new User({
+      firstName: 'Full',
+      lastName: 'Name',
+      displayName: 'Full Name',
+      email: 'temp@test.com',
+      username: _creds.usernameOrEmail,
+      password: _creds.password,
+      provider: 'local',
+      roles: ['admin', 'user']
+    });
 
-        // Save a new song
-        agent.post('/api/songs')
-          .send(song)
-          .expect(200)
-          .end(function (songSaveErr, songSaveRes) {
-            // Handle song save error
-            if (songSaveErr) {
-              return done(songSaveErr);
-            }
+    _songOwner.save(function (err, _user) {
+      // Handle save error
+      if (err) {
+        return done(err);
+      }
 
-            // Get a list of songs
-            agent.get('/api/songs')
-              .end(function (songsGetErr, songsGetRes) {
-                // Handle song save error
-                if (songsGetErr) {
-                  return done(songsGetErr);
-                }
+      // Sign in with the user that will create the Song
+      agent.post('/api/auth/signin')
+        .send(_creds)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
 
-                // Get songs list
-                var songs = songsGetRes.body;
+          // Get the userId
+          var userId = _user._id;
 
-                // Set assertions
-                (songs[0].user._id).should.equal(userId);
-                (songs[0].title).should.match('Song Title');
+          // Save a new song
+          agent.post('/api/songs')
+            .send(song)
+            .expect(200)
+            .end(function (songSaveErr, songSaveRes) {
+              // Handle song save error
+              if (songSaveErr) {
+                return done(songSaveErr);
+              }
 
-                // Call the assertion callback
-                done();
-              });
-          });
-      });
+              // Set assertions on new song
+              (songSaveRes.body.title).should.equal(song.title);
+              should.exist(songSaveRes.body.user);
+              should.equal(songSaveRes.body.user._id, userId);
+
+              // now signin with the test suite user
+              agent.post('/api/auth/signin')
+                .send(credentials)
+                .expect(200)
+                .end(function (err, res) {
+                  // Handle signin error
+                  if (err) {
+                    return done(err);
+                  }
+
+                  // Update song title
+                  song.title = 'New Title';
+
+                  // Update an existing song
+                  agent.put('/api/songs/' + songSaveRes.body._id)
+                    .send(song)
+                    .expect(200)
+                    .end(function (songUpdateErr, songUpdateRes) {
+                      // Handle song update error
+                      if (songUpdateErr) {
+                        return done(songUpdateErr);
+                      }
+
+                      // Set assertions
+                      (songUpdateRes.body._id).should.equal(songSaveRes.body._id);
+                      (songUpdateRes.body.title).should.match('New Title');
+
+                      // Call the assertion callback
+                      done();
+                    });
+                });
+            });
+        });
+    });
   });
 
-  it('should be able to update an song if signed in', function (done) {
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
+  it('admins should be able to delete a song that a different user created', function (done) {
+    // Create temporary user creds
+    var _creds = {
+      usernameOrEmail: 'songowner',
+      password: 'M3@n.jsI$Aw3$0m3'
+    };
 
-        // Get the userId
-        var userId = user.id;
+    // Create user that will create the Song
+    var _songOwner = new User({
+      firstName: 'Full',
+      lastName: 'Name',
+      displayName: 'Full Name',
+      email: 'temp@test.com',
+      username: _creds.usernameOrEmail,
+      password: _creds.password,
+      provider: 'local',
+      roles: ['admin', 'user']
+    });
 
-        // Save a new song
-        agent.post('/api/songs')
-          .send(song)
-          .expect(200)
-          .end(function (songSaveErr, songSaveRes) {
-            // Handle song save error
-            if (songSaveErr) {
-              return done(songSaveErr);
-            }
+    _songOwner.save(function (err, _user) {
+      // Handle save error
+      if (err) {
+        return done(err);
+      }
 
-            // Update song title
-            song.title = 'New Title';
+      // Sign in with the user that will create the Song
+      agent.post('/api/auth/signin')
+        .send(_creds)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
 
-            // Update an existing song
-            agent.put('/api/songs/' + songSaveRes.body._id)
-              .send(song)
-              .expect(200)
-              .end(function (songUpdateErr, songUpdateRes) {
-                // Handle song update error
-                if (songUpdateErr) {
-                  return done(songUpdateErr);
-                }
+          // Get the userId
+          var userId = _user._id;
 
-                // Set assertions
-                (songUpdateRes.body._id).should.equal(songSaveRes.body._id);
-                (songUpdateRes.body.title).should.match('New Title');
+          // Save a new song
+          agent.post('/api/songs')
+            .send(song)
+            .expect(200)
+            .end(function (songSaveErr, songSaveRes) {
+              // Handle song save error
+              if (songSaveErr) {
+                return done(songSaveErr);
+              }
 
-                // Call the assertion callback
-                done();
-              });
-          });
-      });
-  });
+              // Set assertions on new song
+              (songSaveRes.body.title).should.equal(song.title);
+              should.exist(songSaveRes.body.user);
+              should.equal(songSaveRes.body.user._id, userId);
 
-  it('should not be able to save an song if no title is provided', function (done) {
-    // Invalidate title field
-    song.title = '';
+              // now signin with the test suite user
+              agent.post('/api/auth/signin')
+                .send(credentials)
+                .expect(200)
+                .end(function (err, res) {
+                  // Handle signin error
+                  if (err) {
+                    return done(err);
+                  }
 
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
+                  // Delete the existing song
+                  agent.delete('/api/songs/' + songSaveRes.body._id)
+                    .send(song)
+                    .expect(200)
+                    .end(function (songDeleteErr, songDeleteRes) {
+                      // Handle song error error
+                      if (songDeleteErr) {
+                        return done(songDeleteErr);
+                      }
 
-        // Get the userId
-        var userId = user.id;
+                      // Set assertions
+                      (songDeleteRes.body._id).should.equal(songSaveRes.body._id);
 
-        // Save a new song
-        agent.post('/api/songs')
-          .send(song)
-          .expect(422)
-          .end(function (songSaveErr, songSaveRes) {
-            // Set message assertion
-            (songSaveRes.body.message).should.match('Title cannot be blank');
-
-            // Handle song save error
-            done(songSaveErr);
-          });
-      });
-  });
-
-  it('should be able to delete an song if signed in', function (done) {
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
-
-        // Get the userId
-        var userId = user.id;
-
-        // Save a new song
-        agent.post('/api/songs')
-          .send(song)
-          .expect(200)
-          .end(function (songSaveErr, songSaveRes) {
-            // Handle song save error
-            if (songSaveErr) {
-              return done(songSaveErr);
-            }
-
-            // Delete an existing song
-            agent.delete('/api/songs/' + songSaveRes.body._id)
-              .send(song)
-              .expect(200)
-              .end(function (songDeleteErr, songDeleteRes) {
-                // Handle song error error
-                if (songDeleteErr) {
-                  return done(songDeleteErr);
-                }
-
-                // Set assertions
-                (songDeleteRes.body._id).should.equal(songSaveRes.body._id);
-
-                // Call the assertion callback
-                done();
-              });
-          });
-      });
-  });
-
-  it('should be able to get a single song if signed in and verify the custom "isCurrentUserOwner" field is set to "true"', function (done) {
-    // Create new song model instance
-    song.user = user;
-    var songObj = new Song(song);
-
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
-
-        // Get the userId
-        var userId = user.id;
-
-        // Save a new song
-        agent.post('/api/songs')
-          .send(song)
-          .expect(200)
-          .end(function (songSaveErr, songSaveRes) {
-            // Handle song save error
-            if (songSaveErr) {
-              return done(songSaveErr);
-            }
-
-            // Get the song
-            agent.get('/api/songs/' + songSaveRes.body._id)
-              .expect(200)
-              .end(function (songInfoErr, songInfoRes) {
-                // Handle song error
-                if (songInfoErr) {
-                  return done(songInfoErr);
-                }
-
-                // Set assertions
-                (songInfoRes.body._id).should.equal(songSaveRes.body._id);
-                (songInfoRes.body.title).should.equal(song.title);
-
-                // Assert that the "isCurrentUserOwner" field is set to true since the current User created it
-                (songInfoRes.body.isCurrentUserOwner).should.equal(true);
-
-                // Call the assertion callback
-                done();
-              });
-          });
-      });
+                      // Call the assertion callback
+                      done();
+                    });
+                });
+            });
+        });
+    });
   });
 
   afterEach(function (done) {

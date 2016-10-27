@@ -21,5 +21,11 @@
       state: 'songs.list',
       roles: ['*']
     });
+
+    menuService.addSubMenuItem('topbar', 'songs', {
+      title: 'Create Song',
+      state: 'songs.create',
+      roles: ['user']
+    });
   }
 }());

@@ -1,9 +1,9 @@
 (function () {
   'use strict';
 
-  describe('Songs Admin Controller Tests', function () {
+  describe('Songs Edit Controller Tests', function () {
     // Initialize global variables
-    var SongsAdminController,
+    var SongsEditController,
       $scope,
       $httpBackend,
       $state,
@@ -64,7 +64,7 @@
       };
 
       // Initialize the Songs controller.
-      SongsAdminController = $controller('SongsAdminController as vm', {
+      SongsEditController = $controller('SongsEditController as vm', {
         $scope: $scope,
         songResolve: {}
       });
@@ -99,7 +99,7 @@
         // Test Notification success was called
         expect(Notification.success).toHaveBeenCalledWith({ message: '<i class="glyphicon glyphicon-ok"></i> Song saved successfully!' });
         // Test URL redirection after the song was created
-        expect($state.go).toHaveBeenCalledWith('admin.songs.list');
+        expect($state.go).toHaveBeenCalledWith('songs.list');
       }));
 
       it('should call Notification.error if error', function () {
@@ -132,7 +132,7 @@
         // Test Notification success was called
         expect(Notification.success).toHaveBeenCalledWith({ message: '<i class="glyphicon glyphicon-ok"></i> Song saved successfully!' });
         // Test URL location to new object
-        expect($state.go).toHaveBeenCalledWith('admin.songs.list');
+        expect($state.go).toHaveBeenCalledWith('songs.list');
       }));
 
       it('should  call Notification.error if error', inject(function (SongsService) {
@@ -164,7 +164,7 @@
         $httpBackend.flush();
 
         expect(Notification.success).toHaveBeenCalledWith({ message: '<i class="glyphicon glyphicon-ok"></i> Song deleted successfully!' });
-        expect($state.go).toHaveBeenCalledWith('admin.songs.list');
+        expect($state.go).toHaveBeenCalledWith('songs.list');
       });
 
       it('should should not delete the song and not redirect', function () {

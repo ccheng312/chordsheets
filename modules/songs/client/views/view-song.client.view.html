@@ -3,11 +3,11 @@
     <div class="pull-right">
     <form class="form-inline">
         <label>Key:</label>
-        <a class="btn btn-primary" ng-click="vm.transposeDown()">
+        <a uib-tooltip="Transpose Down" class="btn btn-primary" ng-click="vm.transposeDown()">
           <i class="glyphicon glyphicon-minus"></i>
         </a>
         <select class="form-control" ng-model="vm.key" ng-options="key group by vm.mode(key) for key in vm.keys"></select>
-        <a class="btn btn-primary" ng-click="vm.transposeUp()">
+        <a uib-tooltip="Transpose Up" class="btn btn-primary" ng-click="vm.transposeUp()">
           <i class="glyphicon glyphicon-plus"></i>
         </a>
     </form>
@@ -19,6 +19,12 @@
 <h1>
     <span ng-bind="vm.song.title"></span>
     <small>- <span ng-bind="vm.song.artist"></span></small>
+    <a uib-tooltip="Edit Song" ng-show="vm.song.isCurrentUserOwner || vm.isAdmin()" class="btn btn-primary" data-ui-sref="songs.edit({songId: vm.song._id})">
+      <i class="glyphicon glyphicon-edit"></i>
+    </a>
+    <a uib-tooltip="Create a Copy" ng-show="vm.authentication.user" class="btn btn-primary" data-ui-sref="songs.copy({songId: vm.song._id})">
+      <i class="glyphicon glyphicon-copy"></i>
+    </a>
 </h1>
   </div>
   <p class="chordsheet" ng-bind-html="vm.chordpro.format(vm.song.content, vm.song.defaultKey, vm.key)"></p>

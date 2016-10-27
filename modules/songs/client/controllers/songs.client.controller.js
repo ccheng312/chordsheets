@@ -14,10 +14,16 @@
     vm.key = song.defaultKey;
     vm.chordpro = chordpro;
     vm.authentication = Authentication;
+    vm.isAdmin = isAdmin;
     vm.keys = chords.keys();
     vm.mode = chords.mode;
     vm.transposeDown = transposeDown;
     vm.transposeUp = transposeUp;
+
+    function isAdmin() {
+      var user = Authentication.user;
+      return user && user.roles.includes('admin');
+    }
 
     function transposeUp() {
       vm.key = chords.transposeKey(vm.key, 1);
